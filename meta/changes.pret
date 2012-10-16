@@ -4,3 +4,8 @@
 	issued  2012-08-05;
 	label   "Initial release".
 
+`HTML-Inject 0.002 cpan:TOBYINK`
+	issued  2012-10-16;
+	changeset [
+		item "Use Scalar::Does for type constraint checking."^^Addition;
+	].

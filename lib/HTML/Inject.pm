@@ -1,51 +1,61 @@
 package HTML::Inject;
 
 use 5.010;
+use strict;
+use warnings;
+use utf8;
+
+BEGIN {
+	$HTML::Inject::AUTHORITY = 'cpan:TOBYINK';
+	$HTML::Inject::VERSION   = '0.002';
+}
+
 use constant {
 	true       => !!1,
 	false      => !!0,
 	read_only  => 'ro',
 	read_write => 'rw',
 };
-use strict;
-use warnings;
-use utf8;
-use Moo;
-use namespace::sweep;
 
-BEGIN {
-	$HTML::Inject::AUTHORITY = 'cpan:TOBYINK';
-	$HTML::Inject::VERSION   = '0.001';
+use Carp;
+use HTML::HTML5::Parser;
+use IO::Detect qw( is_filehandle is_filename );
+use Scalar::Does 0.002 qw( blessed reftype -constants );
+use XML::LibXML 1.94;
+
+sub must_do {
+	my $role = shift;
+	return sub { does($_[0], $role) or confess "Does not do role $_[0]" };
 }
 
-use HTML::HTML5::Parser;
-use IO::Detect qw(is_filehandle is_filename);
-use overload ();
-use Scalar::Util qw(blessed reftype);
-use XML::LibXML 1.94;
+use Moo;
+use namespace::sweep -also => [qw(
+	must_do
+	true false read_only read_write
+)];
 
 has target => (
 	is         => read_only,
-	isa        => sub { $_[0]->isa('XML::LibXML::Document') },
+	isa        => must_do( 'XML::LibXML::Document' ),
 	coerce     => \&_coerce_dom,
 	required   => true,
 );
 
 has missing_nodes => (
 	is         => read_write,
-	isa        => sub { ref $_[0] eq 'ARRAY' },
+	isa        => must_do( ARRAY ),
 	default    => sub { [] },
 );
 
 has head_element_test => (
 	is         => read_only,
-	isa        => sub { reftype($_[0]) eq 'CODE' or overload::Method($_[0], '&{}') },
+	isa        => must_do( CODE ),
 	default    => sub { sub { $_[0]->nodeName ~~ [qw(title link meta style)] } },
 );
 
 has body_element_test => (
 	is         => read_only,
-	isa        => sub { reftype($_[0]) eq 'CODE' or overload::Method($_[0], '&{}') },
+	isa        => must_do( CODE ),
 	default    => sub { sub { $_[0]->nodeName ~~ [qw(script map)] } },
 );
 
@@ -99,8 +109,8 @@ sub _find_content
 {
 	my ($self, $content) = @_;
 	my %rv;
-
-	if (ref $content eq 'ARRAY')
+	
+	if (does($content, ARRAY))
 	{
 		for my $c (@$content)
 		{
@@ -123,18 +133,21 @@ sub _coerce_dom
 {
 	my ($it) = @_;
 	
+	return $it
+		if does($it, 'XML::LibXML::Document');
+	
 	return HTML::HTML5::Parser::->load_html(IO => $it)
 		if is_filehandle $it;
-
+	
 	return HTML::HTML5::Parser::->load_html(location => $it)
 		if is_filename $it;
-
+	
 	return HTML::HTML5::Parser::->load_html(location => "$it")
 		if blessed $it && $it->isa('URI');
-
+	
 	return HTML::HTML5::Parser::->load_html(location => "$it")
 		if !blessed $it && $it =~ /^(https?|file):\S+$/i;
-
+	
 	return HTML::HTML5::Parser::->load_html(string => $it)
 }
 
