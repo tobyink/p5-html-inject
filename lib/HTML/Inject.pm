@@ -50,13 +50,13 @@ has missing_nodes => (
 has head_element_test => (
 	is         => read_only,
 	isa        => must_do( CODE ),
-	default    => sub { sub { $_[0]->nodeName ~~ [qw(title link meta style)] } },
+	default    => sub { sub { no warnings; $_[0]->nodeName ~~ [qw(title link meta style)] } },
 );
 
 has body_element_test => (
 	is         => read_only,
 	isa        => must_do( CODE ),
-	default    => sub { sub { $_[0]->nodeName ~~ [qw(script map)] } },
+	default    => sub { sub { no warnings; $_[0]->nodeName ~~ [qw(script map)] } },
 );
 
 sub inject
