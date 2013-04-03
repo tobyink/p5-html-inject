@@ -7,7 +7,7 @@ use utf8;
 
 BEGIN {
 	$HTML::Inject::AUTHORITY = 'cpan:TOBYINK';
-	$HTML::Inject::VERSION   = '0.002';
+	$HTML::Inject::VERSION   = '0.003';
 }
 
 use constant {

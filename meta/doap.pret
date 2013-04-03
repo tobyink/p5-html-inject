@@ -16,8 +16,3 @@
 
 <http://dev.perl.org/licenses/>
 	dc:title  "the same terms as the perl 5 programming language system itself".
-
-cpan:TOBYINK
-	foaf:name  "Toby Inkster";
-	foaf:mbox  <mailto:tobyink@cpan.org>.
-

@@ -9,3 +9,16 @@
 	changeset [
 		item "Use Scalar::Does for type constraint checking."^^Addition;
 	].
+
+cpan:ANDK foaf:name "Andreas J. König".
+
+`HTML-Inject 0.003 cpan:TOBYINK`
+	issued  2013-04-03;
+	changeset [
+		item [
+			a dcs:Bugfix;
+			label "Bleadperl v5.17.10-30-g0f539b1 breaks CPAN";
+			dcs:fixes RT#84343;
+			dcs:thanks cpan:ANDK;
+		];
+	].
