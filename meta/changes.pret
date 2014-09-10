@@ -22,3 +22,10 @@ cpan:ANDK foaf:name "Andreas J. König".
 			dcs:thanks cpan:ANDK;
 		];
 	].
+
+`HTML-Inject 0.004 cpan:TOBYINK`
+	issued    2014-09-10;
+	changeset [
+		item "Switch to Dist::Inkt."^^Packaging;
+	].
+
